@@ -48,152 +48,223 @@ yarn build
 # Архитектура  
 Используется парадигма MVP.  
 
-## Базовые классы  
+### Model (Модель)
 
-### Класс EventEmitter  
-Назначение:  управляет событиями, позволяет подписываться на события и 
-уведомлять подписчиков об их наступлении.
+#### Классы:
 
-Методы:  
-`on(event: string, listener: Function): void` — устанавливает обработчик на событие.  
-`off(event: string, listener: Function): void` — сбрасывает обработчик с события.  
-`emit(event: string, ...args: any[]): void` — уведомляет о наступлении события.  
+1.  **ProductModel**
 
-### Класс Model  
-Назначение:  класс, предназначенный для создания моделей данных.
+    -   **Описание**: Класс управляет данными товаров.
+    -   **Поля**:
+        -   `products` (Product[]) --- массив объектов товаров.
+    -   **Методы**:
+        -   `addProduct(product: Product): void` --- добавляет товар в массив товаров.
+        -   `getProductById(id: number): Product | undefined` --- возвращает товар по его идентификатору.
+        -   `removeProductById(id: number): void` --- удаляет товар из массива по его идентификатору.
+2.  **CartModel**
 
-Методы:  
-`emitChanges(): void` — сообщает, что модель поменялась.
+    -   **Описание**: Класс описывает корзину покупателя и управляет товарами в корзине.
+    -   **Поля**:
+        -   `items` (CartItem[]) --- массив элементов в корзине.
+    -   **Методы**:
+        -   `addItem(product: Product): void` --- добавляет товар в корзину.
+        -   `removeItem(productId: number): void` --- удаляет товар из корзины по его идентификатору.
+        -   `getTotalPrice(): number` --- возвращает общую стоимость товаров в корзине.
+3.  **OrderModel**
 
-### Класс Component
-Назначение:  класс для отрисовки пользовательского 
-интерфейса и работы с DOM-элементами.
+    -   **Описание**: Класс описывает заказы покупателей и управляет ими.
+    -   **Поля**:
+        -   `orders` (Order[]) --- массив заказов.
+    -   **Методы**:
+        -   `createOrder(order: Order): void` --- создает новый заказ.
+        -   `getOrderById(id: number): Order | undefined` --- возвращает заказ по его идентификатору.
+4.  **AppState**
 
-Методы:  
-`toggleClass(className: string): void` — переключает класс компонента.  
-`setText(text: string): void` — устанавливает текстовое содержимое для компонента.  
-`setDisabled(disabled: boolean): void` — меняет статус блокировки компонента.  
-`setHidden(hidden: boolean): void` — скрывает компонент.  
-`setVisible(visible: boolean): void` — делает компонент видимым.  
-`setImage(src: string, alt: string): void` — устанавливает изображение для компонента.  
-`render(): HTMLElement` — возвращает корневой DOM-элемент.  
+    -   **Описание**: Класс хранит текущее состояние приложения, включая корзину, формы и каталог товаров.
+    -   **Поля**:
+        -   `basket` (CartItem[]) --- состояние корзины.
+        -   `deliveryForm` (DeliveryData) --- данные формы доставки.
+        -   `contactsForm` (ContactsData) --- контактные данные.
+        -   `catalog` (Product[]) --- каталог товаров.
+        -   `preview` (Product) --- предпросмотр продукта.
+    -   **Методы**:
+        -   `updateBasket(items: CartItem[]): void` --- обновляет состояние корзины.
+        -   `addToBasket(item: CartItem): void` --- добавляет товар в корзину.
+        -   `removeFromBasket(itemId: number): void` --- удаляет товар из корзины.
+        -   `clearBasket(): void` --- очищает корзину.
+        -   `setDeliveryForm(data: DeliveryData): void` --- устанавливает данные для доставки.
+        -   `setContactsForm(data: ContactsData): void` --- устанавливает контактные данные.
+        -   `setCatalog(products: Product[]): void` --- устанавливает каталог товаров.
+        -   `setPreview(product: Product): void` --- устанавливает предпросмотр продукта.
+        -   `isProductInBasket(productId: number): boolean` --- проверяет наличие товара в корзине.
+        -   `validateAddress(address: string): boolean` --- проверяет валидность адреса доставки.
+        -   `validateOrder(order: Order): boolean` --- проверяет валидность заказа.
+        -   `getTotalResult(): number` --- возвращает общую стоимость заказа.
 
-## Общие компоненты
+### View (Представление)
 
-### Класс AppState
-Назначение:  класс для хранения состояния приложения. Наследуется от `Model`.
+#### Классы:
 
-Методы:  
-`updateBasket(items: CartItem[]): void` — обновляет корзину.  
-`addToBasket(item: CartItem): void` — добавляет товар в корзину.  
-`removeFromBasket(itemId: number): void` — удаляет товар из корзины.  
-`clearBasket(): void` — очищает корзину.  
-`setDeliveryForm(data: DeliveryData): void` — устанавливает данные для доставки.  
-`setContactsForm(data: ContactsData): void` — устанавливает контактные данные.  
-`setCatalog(products: Product[]): void` — устанавливает каталог товаров.  
-`setPreview(product: Product): void` — устанавливает предпросмотр продукта.  
-`isProductInBasket(productId: number): boolean` — проверяет наличие товара в корзине.  
-`validateAddress(address: string): boolean` — проверяет валидность адреса доставки.  
-`validateOrder(order: Order): boolean` — проверяет валидность заказа.  
-`getTotalResult(): number` — возвращает общую стоимость заказа.  
+1.  **ProductCardView**
 
-## Компоненты представления
+    -   **Описание**: Класс отображает карточку товара.
+    -   **Поля**:
+        -   `product` (Product) --- объект товара.
+        -   `element` (HTMLElement) --- корневой элемент карточки товара.
+    -   **Методы**:
+        -   `render(): void` --- рендерит карточку товара.
+2.  **CartView**
 
-### Класс Order
-Назначение: класс для управления и отображения формы ввода контактов для заказа. Наследуется от `Form`.
+    -   **Описание**: Класс отображает корзину.
+    -   **Поля**:
+        -   `cart` (CartModel) --- объект корзины.
+        -   `element` (HTMLElement) --- корневой элемент корзины.
+    -   **Методы**:
+        -   `render(): void` --- рендерит корзину.
+3.  **CheckoutFormView**
 
-Методы:  
-`setPhone(phone: string): void` — устанавливает номер телефона.  
-`setEmail(email: string): void` — устанавливает email.  
+    -   **Описание**: Класс отображает форму оформления заказа.
+    -   **Поля**:
+        -   `element` (HTMLElement) --- корневой элемент формы.
+    -   **Методы**:
+        -   `render(): void` --- рендерит форму оформления заказа.
+        -   `onSubmit(callback: (order: Order) => void): void` --- устанавливает обработчик события отправки формы.
+4.  **OrderConfirmationView**
 
-### Класс Delivery
-Назначение: класс для управления и отображения формы ввода и 
-выбора данных для доставки. Наследуется от `Form`.
+    -   **Описание**: Класс отображает подтверждение заказа.
+    -   **Поля**:
+        -   `element` (HTMLElement) --- корневой элемент подтверждения.
+    -   **Методы**:
+        -   `render(): void` --- рендерит подтверждение заказа.
+5.  **Page**
 
-Методы:  
-`setPaymentMethod(method: string): void` — устанавливает метод оплаты.  
-`setAddress(address: string): void` — устанавливает адрес доставки.
+    -   **Описание**: Класс отображает страницу с товарами и корзиной.
+    -   **Поля**:
+        -   `element` (HTMLElement) --- корневой элемент страницы.
+    -   **Методы**:
+        -   `setCounter(counter: number): void` --- устанавливает значение счетчика товаров в корзине.
+        -   `setCatalog(products: Product[]): void` --- устанавливает каталог продуктов.
+        -   `setLocked(locked: boolean): void` --- блокирует прокрутку страницы в модальном окне.
+6.  **Card**
 
-### Класс Page
-Назначение: класс для отображения страницы с товарами и корзиной. 
-Наследуется от `Component`.
+    -   **Описание**: Класс отображает карточку товара и её данные.
+    -   **Поля**:
+        -   `product` (Product) --- объект товара.
+        -   `element` (HTMLElement) --- корневой элемент карточки товара.
+    -   **Методы**:
+        -   `setId(id: number): void` --- устанавливает идентификатор карточки.
+        -   `setTitle(title: string): void` --- устанавливает название товара.
+        -   `setImage(src: string): void` --- устанавливает изображение товара.
+        -   `setDescription(description: string): void` --- устанавливает описание товара.
+        -   `setCategory(category: string): void` --- устанавливает категорию товара.
+        -   `setButton(text: string): void` --- устанавливает текст кнопки.
+        -   `setPrice(price: number): void` --- устанавливает цену товара.
+7.  **Basket**
 
-Методы:  
-`setCounter(counter: number): void` — устанавливает значение счетчика товаров в корзине.  
-`setCatalog(products: Product[]): void` — устанавливает каталог продуктов.  
-`setLocked(locked: boolean): void` — блокирует прокрутку страницы в модальном окне.  
+    -   **Описание**: Класс отображает корзину и товары в ней.
+    -   **Поля**:
+        -   `items` (CartItem[]) --- массив элементов в корзине.
+        -   `element` (HTMLElement) --- корневой элемент корзины.
+    -   **Методы**:
+        -   `setItems(items: CartItem[]): void` --- устанавливает товары в корзину.
+        -   `setTotal(total: number): void` --- устанавливает общую стоимость товаров в корзине.
+        -   `setSelected(selected: boolean): void` --- блокирует или разблокирует оформление товара.
+8.  **Modal**
 
-### Класс Card
-Назначение: класс для отображения карточки товара. Наследуется от `Component`.
+    -   **Описание**: Класс отображает модальное окно.
+    -   **Поля**:
+        -   `element` (HTMLElement) --- корневой элемент модального окна.
+    -   **Методы**:
+        -   `setContent(content: HTMLElement): void` --- устанавливает содержимое модального окна.
+        -   `open(): void` --- открывает модальное окно.
+        -   `close(): void` --- закрывает модальное окно.
+        -   `render(): HTMLElement` --- рендерит модальное окно.
+9.  **Success**
 
-Методы:  
-`setId(id: number): void` — устанавливает идентификатор карточки.  
-`setTitle(title: string): void` — устанавливает название товара.  
-`setImage(src: string): void` — устанавливает изображение товара.  
-`setDescription(description: string): void` — устанавливает описание товара.  
-`setCategory(category: string): void` — устанавливает категорию товара.  
-`setButton(text: string): void` — устанавливает текст кнопки.  
-`setPrice(price: number): void` — устанавливает цену товара и отключает кнопку покупки, 
-если товара нет в наличии.
+    -   **Описание**: Класс отображает успешное оформление заказа.
+    -   **Поля**:
+        -   `element` (HTMLElement) --- корневой элемент успешного оформления заказа.
+    -   **Методы**:
+        -   `setTotal(total: number): void` --- устанавливает значение общей суммы заказа.
+10. **Form**
 
-### Класс Basket
-Назначение: класс для отображения корзины и товаров в ней. Наследуется от `Component`.
+    -   **Описание**: Класс обрабатывает результаты ввода форм и передает информацию о результатах валидации.
+    -   **Поля**:
+        -   `element` (HTMLElement) --- корневой элемент формы.
+    -   **Методы**:
+        -   (будут реализованы в дочерних классах)
 
-Методы:  
-`setItems(items: CartItem[]): void` — устанавливает товары в корзину.  
-`setTotal(total: number): void` — устанавливает общую стоимость товаров в корзине.  
-`setSelected(selected: boolean): void` — блокирует или разблокирует оформление товара.  
+### Presenter (Презентер)
 
-### Класс Modal
-Назначение: класс для отображения модального окна. Наследуется от `Component`.
+#### Классы:
 
-Методы:  
-`setContent(content: HTMLElement): void` — устанавливает содержимое модального окна.  
-`open(): void` — открывает модальное окно.  
-`close(): void` — закрывает модальное окно.  
-`render(): HTMLElement` — рендерит модальное окно.  
+1.  **EventEmitter**
 
-### Класс Success
-Назначение: класс для отображения модального окна успешного оформления заказа. Наследуется от `Component`.
+    -   **Описание**: Класс управляет событиями в приложении.
+    -   **Поля**:
+        -   `events` (Map<string, Function[]>) --- карта событий и их слушателей.
+    -   **Методы**:
+        -   `on(event: string, listener: Function): void` --- устанавливает обработчик на событие.
+        -   `off(event: string, listener: Function): void` --- сбрасывает обработчик с события.
+        -   `emit(event: string, ...args: any[]): void` --- уведомляет подписчиков о наступлении события.
 
-Методы:  
-`setTotal(total: number): void` — устанавливает значение общей суммы заказа.
 
-### Класс Form
-Назначение: класс для обработки результатов ввода форм и передачи информации о результатах валидации.
-
-## Интерфейсы и типы данных
-
-```
-interface Product {
-id: number;
-name: string;
-description: string;
-price: number;
-category: string;
+### Пример интерфейсов
+````
+interface IProductCardView {
+  product: Product;
+  render(): void;
 }
 
-interface CartItem {
-product: Product;
+interface ICartView {
+  cart: CartModel;
+  render(): void;
 }
 
-interface Order {
-id: number;
-items: CartItem[];
-total: number;
-address: string;
-paymentMethod: string;
-contactEmail: string;
-contactPhone: string;
+interface ICheckoutFormView {
+  render(): void;
+  onSubmit(callback: (order: Order) => void): void;
 }
 
-type DeliveryData = {
-address: string;
-paymentMethod: string;
-};
+interface IOrderConfirmationView {
+  render(): void;
+}
 
-type ContactsData = {
-email: string;
-phone: string;
-};
-```
+interface IPage {
+  setCounter(counter: number): void;
+  setCatalog(products: Product[]): void;
+  setLocked(locked: boolean): void;
+}
+
+interface ICard {
+  product: Product;
+  setId(id: number): void;
+  setTitle(title: string): void;
+  setImage(src: string): void;
+  setDescription(description: string): void;
+  setCategory(category: string): void;
+  setButton(text: string): void;
+  setPrice(price: number): void;
+}
+
+interface IBasket {
+  setItems(items: CartItem[]): void;
+  setTotal(total: number): void;
+  setSelected(selected: boolean): void;
+}
+
+interface IModal {
+  setContent(content: HTMLElement): void;
+  open(): void;
+  close(): void;
+  render(): HTMLElement;
+}
+
+interface ISuccess {
+  setTotal(total: number): void;
+}
+
+interface IForm {
+  element: HTMLElement;
+}
+````
