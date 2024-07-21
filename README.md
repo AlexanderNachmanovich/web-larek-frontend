@@ -46,153 +46,154 @@ npm run build
 yarn build
 ```
 # Архитектура  
-Используется парадигма MVP.
-## СЛОЙ МОДЕЛЬ
+Используется парадигма MVP.  
 
-### Класс Product  
-Назначение: Описывает товар в магазине.
+## Базовые классы  
 
-Параметры:  
-id (number) — уникальный идентификатор товара.  
-name (string) — название товара.  
-description (string) — описание товара.  
-price (number) — цена товара.  
-category (string) — категория товара.  
+### Класс EventEmitter  
+Назначение:  управляет событиями, позволяет подписываться на события и 
+уведомлять подписчиков об их наступлении.
 
-Поля класса:  
-id (number) — уникальный идентификатор товара.  
-name (string) — название товара.  
-description (string) — описание товара.  
-price (number) — цена товара.  
-category (string) — категория товара.  
+Методы:  
+`on(event: string, listener: Function): void` — устанавливает обработчик на событие.  
+`off(event: string, listener: Function): void` — сбрасывает обработчик с события.  
+`emit(event: string, ...args: any[]): void` — уведомляет о наступлении события.  
 
-### Класс Cart
+### Класс Model  
+Назначение:  класс, предназначенный для создания моделей данных.
 
-Назначение: Описывает корзину покупателя.  
+Методы:  
+`emitChanges(): void` — сообщает, что модель поменялась.
 
-Параметры: Не принимает параметры.  
+### Класс Component
+Назначение:  класс для отрисовки пользовательского 
+интерфейса и работы с DOM-элементами.
 
-Поля класса:  
-items (CartItem[]) — массив элементов в корзине.  
+Методы:  
+`toggleClass(className: string): void` — переключает класс компонента.  
+`setText(text: string): void` — устанавливает текстовое содержимое для компонента.  
+`setDisabled(disabled: boolean): void` — меняет статус блокировки компонента.  
+`setHidden(hidden: boolean): void` — скрывает компонент.  
+`setVisible(visible: boolean): void` — делает компонент видимым.  
+`setImage(src: string, alt: string): void` — устанавливает изображение для компонента.  
+`render(): HTMLElement` — возвращает корневой DOM-элемент.  
 
-Методы класса:  
-addItem(product: Product, quantity: number): void — добавляет товар в корзину.  
-removeItem(productId: number): void — удаляет товар из корзины.  
-getTotalPrice(): number — возвращает общую стоимость товаров в корзине.  
+## Общие компоненты
 
-### Класс Order  
+### Класс AppState
+Назначение:  класс для хранения состояния приложения. Наследуется от `Model`.
 
-Назначение: Описывает заказ покупателя.  
+Методы:  
+`updateBasket(items: CartItem[]): void` — обновляет корзину.  
+`addToBasket(item: CartItem): void` — добавляет товар в корзину.  
+`removeFromBasket(itemId: number): void` — удаляет товар из корзины.  
+`clearBasket(): void` — очищает корзину.  
+`setDeliveryForm(data: DeliveryData): void` — устанавливает данные для доставки.  
+`setContactsForm(data: ContactsData): void` — устанавливает контактные данные.  
+`setCatalog(products: Product[]): void` — устанавливает каталог товаров.  
+`setPreview(product: Product): void` — устанавливает предпросмотр продукта.  
+`isProductInBasket(productId: number): boolean` — проверяет наличие товара в корзине.  
+`validateAddress(address: string): boolean` — проверяет валидность адреса доставки.  
+`validateOrder(order: Order): boolean` — проверяет валидность заказа.  
+`getTotalResult(): number` — возвращает общую стоимость заказа.  
 
-Параметры:  
-items (CartItem[]) — массив элементов в заказе.  
-total (number) — общая стоимость заказа.  
-address (string) — адрес доставки.  
-paymentMethod (string) — способ оплаты.  
-contactEmail (string) — контактный email.  
-contactPhone (string) — контактный телефон.  
+## Компоненты представления
 
-Поля класса:  
-items (CartItem[]) — массив элементов в заказе.  
-total (number) — общая стоимость заказа.  
-address (string) — адрес доставки.  
-paymentMethod (string) — способ оплаты.  
-contactEmail (string) — контактный email.  
-contactPhone (string) — контактный телефон.  
+### Класс Order
+Назначение: класс для управления и отображения формы ввода контактов для заказа. Наследуется от `Form`.
 
-## СЛОЙ ПРЕДСТАВЛЕНИЯ  
+Методы:  
+`setPhone(phone: string): void` — устанавливает номер телефона.  
+`setEmail(email: string): void` — устанавливает email.  
 
-### Класс ProductCard  
+### Класс Delivery
+Назначение: класс для управления и отображения формы ввода и 
+выбора данных для доставки. Наследуется от `Form`.
 
-Назначение: Отображает карточку товара.  
+Методы:  
+`setPaymentMethod(method: string): void` — устанавливает метод оплаты.  
+`setAddress(address: string): void` — устанавливает адрес доставки.
 
-Параметры:  
-product (Product) — объект товара для отображения.  
+### Класс Page
+Назначение: класс для отображения страницы с товарами и корзиной. 
+Наследуется от `Component`.
 
-Поля класса:  
-product (Product) — объект товара.  
-element (HTMLElement) — корневой элемент карточки товара.  
+Методы:  
+`setCounter(counter: number): void` — устанавливает значение счетчика товаров в корзине.  
+`setCatalog(products: Product[]): void` — устанавливает каталог продуктов.  
+`setLocked(locked: boolean): void` — блокирует прокрутку страницы в модальном окне.  
 
-Методы класса:  
-render(): void — рендерит карточку товара.  
+### Класс Card
+Назначение: класс для отображения карточки товара. Наследуется от `Component`.
 
-### Класс CartView 
+Методы:  
+`setId(id: number): void` — устанавливает идентификатор карточки.  
+`setTitle(title: string): void` — устанавливает название товара.  
+`setImage(src: string): void` — устанавливает изображение товара.  
+`setDescription(description: string): void` — устанавливает описание товара.  
+`setCategory(category: string): void` — устанавливает категорию товара.  
+`setButton(text: string): void` — устанавливает текст кнопки.  
+`setPrice(price: number): void` — устанавливает цену товара и отключает кнопку покупки, 
+если товара нет в наличии.
 
-Назначение: Отображает корзину.  
+### Класс Basket
+Назначение: класс для отображения корзины и товаров в ней. Наследуется от `Component`.
 
-Параметры:  
-cart (Cart) — объект корзины для отображения.  
+Методы:  
+`setItems(items: CartItem[]): void` — устанавливает товары в корзину.  
+`setTotal(total: number): void` — устанавливает общую стоимость товаров в корзине.  
+`setSelected(selected: boolean): void` — блокирует или разблокирует оформление товара.  
 
-Поля класса:  
-cart (Cart) — объект корзины.  
-element (HTMLElement) — корневой элемент корзины.  
+### Класс Modal
+Назначение: класс для отображения модального окна. Наследуется от `Component`.
 
-Методы класса:  
-render(): void — рендерит корзину.  
+Методы:  
+`setContent(content: HTMLElement): void` — устанавливает содержимое модального окна.  
+`open(): void` — открывает модальное окно.  
+`close(): void` — закрывает модальное окно.  
+`render(): HTMLElement` — рендерит модальное окно.  
 
-### Класс CheckoutForm
+### Класс Success
+Назначение: класс для отображения модального окна успешного оформления заказа. Наследуется от `Component`.
 
-Назначение: Отображает форму оформления заказа.  
+Методы:  
+`setTotal(total: number): void` — устанавливает значение общей суммы заказа.
 
-Поля класса:  
-element (HTMLElement) — корневой элемент формы.  
+### Класс Form
+Назначение: класс для обработки результатов ввода форм и передачи информации о результатах валидации.
 
-Методы класса:  
-render(): void — рендерит форму.  
-onSubmit(callback: (order: Order) => void): void — устанавливает обработчик события отправки формы.  
+## Интерфейсы и типы данных
 
-### Класс OrderConfirmation
+```
+interface Product {
+id: number;
+name: string;
+description: string;
+price: number;
+category: string;
+}
 
-Назначение: Отображает подтверждение заказа.  
+interface CartItem {
+product: Product;
+}
 
-Поля класса:  
-element (HTMLElement) — корневой элемент подтверждения.  
+interface Order {
+id: number;
+items: CartItem[];
+total: number;
+address: string;
+paymentMethod: string;
+contactEmail: string;
+contactPhone: string;
+}
 
-Методы класса:  
-render(): void — рендерит подтверждение заказа.  
+type DeliveryData = {
+address: string;
+paymentMethod: string;
+};
 
-## СЛОЙ ПРЕЗЕНТЕРА
-### Класс Presenter
-
-Назначение: Связывает модель и представление.  
-
-Параметры:  
-model (any) — модель данных.  
-view (any) — представление данных.  
-
-Поля класса:  
-model (any) — модель данных.  
-view (any) — представление данных.  
-
-Методы класса:  
-initialize(): void — инициализирует взаимодействие между моделью и представлением.  
-
-## Пример взаимодействия
-
-1. Событие в представлении: Пользователь нажимает кнопку "Купить" на карточке товара.
-
-Класс: ProductCard  
-Событие: click на кнопке "Купить"  
-
-2. Обработка события презентером: Презентер обрабатывает событие и вызывает метод модели для добавления товара в корзину.
-
-Класс: Presenter  
-Метод: addItem(product: Product, quantity: number)  
-
-3. Изменение данных в модели: Модель обновляет данные корзины и генерирует событие.
-
-Класс: Cart  
-Метод: addItem(product: Product, quantity: number)  
-Событие: cartUpdated  
-
-4. Запрос данных и обновление представления: Презентер обрабатывает событие, запрашивает обновленные данные у модели и вызывает рендер представления.
-
-Класс: Presenter  
-Метод: getTotalPrice()  
-Класс: CartView  
-Метод: render()  
-
-5. Перерисовка представления: Представление перерисовывается, отображая обновленные данные корзины.
-
-Класс: CartView  
-Метод: render()  
+type ContactsData = {
+email: string;
+phone: string;
+};
+```
