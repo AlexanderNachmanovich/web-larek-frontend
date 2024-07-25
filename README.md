@@ -39,7 +39,7 @@ npm run start
 
 или
 
-Копировать код
+
 
 `yarn build`
 
