@@ -7,46 +7,46 @@
 - **TypeScript**: Логика приложения.
 - **Webpack**: Инструмент для сборки модулей.
 
-Структура проекта:
-- src/ — исходные файлы проекта
-- src/components/ — папка с JS компонентами
-- src/components/base/ — папка с базовым кодом
+## Структура проекта:
+- src/ --- исходные файлы проекта
+- src/common.blocks/ --- общие блоки проекта
+- src/components/ --- папка с компонентами
+- src/components/base/ --- базовые компоненты и утилиты
+- src/components/common/ --- общие компоненты
 
-Важные файлы:
-- src/pages/index.html — HTML-файл главной страницы
-- src/types/index.ts — файл с типами
-- src/index.ts — точка входа приложения
-- src/styles/styles.scss — корневой файл стилей
-- src/utils/constants.ts — файл с константами
-- src/utils/utils.ts — файл с утилитами
+## Важные файлы:
+- src/pages/index.html --- HTML-файл главной страницы
+- src/types/index.ts --- файл с типами
+- src/index.ts --- точка входа приложения
+- src/scss/styles.scss --- корневой файл стилей
+- src/utils/constants.ts --- файл с константами
+- src/utils/utils.ts --- файл с утилитами
 
 ## Установка и запуск
-Для установки и запуска проекта необходимо выполнить команды
+Для установки и запуска проекта необходимо выполнить команды:
 
-```
-npm install
-npm run start
-```
+npm install  
+npm run start 
 
 или
 
-```
-yarn
-yarn start
-```
-## Сборка
+`yarn start`
 
-```
-npm run build
-```
+Сборка
+------
+
+`npm run build`
 
 или
 
-```
-yarn build
-```
-# Архитектура  
-Используется парадигма MVP.  
+Копировать код
+
+`yarn build`
+
+Архитектура
+-----------
+
+Используется парадигма MVP.
 
 ### Model (Модель)
 
@@ -54,13 +54,11 @@ yarn build
 
 1.  **ProductModel**
 
-    -   **Описание**: Класс управляет данными товаров.
+    -   **Описание**: Класс управляет данными товаров, получаемыми с сервера.
     -   **Поля**:
-        -   `products` (Product[]) --- массив объектов товаров.
+        -   `products` (Product[]) --- массив объектов товаров, получаемых с сервера.
     -   **Методы**:
-        -   `addProduct(product: Product): void` --- добавляет товар в массив товаров.
         -   `getProductById(id: number): Product | undefined` --- возвращает товар по его идентификатору.
-        -   `removeProductById(id: number): void` --- удаляет товар из массива по его идентификатору.
 2.  **CartModel**
 
     -   **Описание**: Класс описывает корзину покупателя и управляет товарами в корзине.
@@ -82,70 +80,42 @@ yarn build
 
     -   **Описание**: Класс хранит текущее состояние приложения, включая корзину, формы и каталог товаров.
     -   **Поля**:
-        -   `basket` (CartItem[]) --- состояние корзины.
+        -   `basket` (CartModel) --- состояние корзины.
         -   `deliveryForm` (DeliveryData) --- данные формы доставки.
         -   `contactsForm` (ContactsData) --- контактные данные.
         -   `catalog` (Product[]) --- каталог товаров.
         -   `preview` (Product) --- предпросмотр продукта.
     -   **Методы**:
-        -   `updateBasket(items: CartItem[]): void` --- обновляет состояние корзины.
-        -   `addToBasket(item: CartItem): void` --- добавляет товар в корзину.
-        -   `removeFromBasket(itemId: number): void` --- удаляет товар из корзины.
-        -   `clearBasket(): void` --- очищает корзину.
         -   `setDeliveryForm(data: DeliveryData): void` --- устанавливает данные для доставки.
         -   `setContactsForm(data: ContactsData): void` --- устанавливает контактные данные.
         -   `setCatalog(products: Product[]): void` --- устанавливает каталог товаров.
         -   `setPreview(product: Product): void` --- устанавливает предпросмотр продукта.
-        -   `isProductInBasket(productId: number): boolean` --- проверяет наличие товара в корзине.
-        -   `validateAddress(address: string): boolean` --- проверяет валидность адреса доставки.
-        -   `validateOrder(order: Order): boolean` --- проверяет валидность заказа.
-        -   `getTotalResult(): number` --- возвращает общую стоимость заказа.
 
 ### View (Представление)
 
-#### Классы:
+#### Абстрактные классы:
 
-1.  **ProductCardView**
+1.  **Component**
 
-    -   **Описание**: Класс отображает карточку товара.
+    -   **Описание**: Абстрактный класс для всех компонентов отображения.
     -   **Поля**:
-        -   `product` (Product) --- объект товара.
-        -   `element` (HTMLElement) --- корневой элемент карточки товара.
+        -   `element` (HTMLElement) --- корневой элемент компонента.
     -   **Методы**:
-        -   `render(): void` --- рендерит карточку товара.
-2.  **CartView**
+        -   `render(data: any): void` --- рендерит компонент, используя `Object.assign` для заполнения атрибутов.
+2.  **Form**
 
-    -   **Описание**: Класс отображает корзину.
-    -   **Поля**:
-        -   `cart` (CartModel) --- объект корзины.
-        -   `element` (HTMLElement) --- корневой элемент корзины.
-    -   **Методы**:
-        -   `render(): void` --- рендерит корзину.
-3.  **CheckoutFormView**
-
-    -   **Описание**: Класс отображает форму оформления заказа.
+    -   **Описание**: Абстрактный класс для всех форм.
     -   **Поля**:
         -   `element` (HTMLElement) --- корневой элемент формы.
+        -   `_submit` (HTMLButtonElement) --- кнопка отправки формы.
+        -   `_errors` (HTMLElement) --- элемент для отображения ошибок.
     -   **Методы**:
-        -   `render(): void` --- рендерит форму оформления заказа.
-        -   `onSubmit(callback: (order: Order) => void): void` --- устанавливает обработчик события отправки формы.
-4.  **OrderConfirmationView**
+        -   `render(data: any): void` --- рендерит форму, используя `Object.assign`.
+        -   `onSubmit(callback: (data: any) => void): void` --- устанавливает обработчик события отправки формы.
 
-    -   **Описание**: Класс отображает подтверждение заказа.
-    -   **Поля**:
-        -   `element` (HTMLElement) --- корневой элемент подтверждения.
-    -   **Методы**:
-        -   `render(): void` --- рендерит подтверждение заказа.
-5.  **Page**
+#### Классы:
 
-    -   **Описание**: Класс отображает страницу с товарами и корзиной.
-    -   **Поля**:
-        -   `element` (HTMLElement) --- корневой элемент страницы.
-    -   **Методы**:
-        -   `setCounter(counter: number): void` --- устанавливает значение счетчика товаров в корзине.
-        -   `setCatalog(products: Product[]): void` --- устанавливает каталог продуктов.
-        -   `setLocked(locked: boolean): void` --- блокирует прокрутку страницы в модальном окне.
-6.  **Card**
+1.  **ProductCard**
 
     -   **Описание**: Класс отображает карточку товара и её данные.
     -   **Поля**:
@@ -159,7 +129,9 @@ yarn build
         -   `setCategory(category: string): void` --- устанавливает категорию товара.
         -   `setButton(text: string): void` --- устанавливает текст кнопки.
         -   `setPrice(price: number): void` --- устанавливает цену товара.
-7.  **Basket**
+        -   `render(): void` --- рендерит карточку товара.
+    -   **Наследуется от**: `Component`
+2.  **Cart**
 
     -   **Описание**: Класс отображает корзину и товары в ней.
     -   **Поля**:
@@ -169,7 +141,36 @@ yarn build
         -   `setItems(items: CartItem[]): void` --- устанавливает товары в корзину.
         -   `setTotal(total: number): void` --- устанавливает общую стоимость товаров в корзине.
         -   `setSelected(selected: boolean): void` --- блокирует или разблокирует оформление товара.
-8.  **Modal**
+        -   `render(): void` --- рендерит корзину.
+    -   **Наследуется от**: `Component`
+3.  **CheckoutFormView**
+
+    -   **Описание**: Класс отображает форму оформления заказа.
+    -   **Поля**:
+        -   `element` (HTMLElement) --- корневой элемент формы.
+    -   **Методы**:
+        -   `render(): void` --- рендерит форму оформления заказа.
+        -   `onSubmit(callback: (order: Order) => void): void` --- устанавливает обработчик события отправки формы.
+    -   **Наследуется от**: `Component`
+4.  **OrderConfirmationView**
+
+    -   **Описание**: Класс отображает подтверждение заказа.
+    -   **Поля**:
+        -   `element` (HTMLElement) --- корневой элемент подтверждения.
+    -   **Методы**:
+        -   `render(): void` --- рендерит подтверждение заказа.
+    -   **Наследуется от**: `Component`
+5.  **Page**
+
+    -   **Описание**: Класс отображает страницу с товарами и корзиной.
+    -   **Поля**:
+        -   `element` (HTMLElement) --- корневой элемент страницы.
+    -   **Методы**:
+        -   `setCounter(counter: number): void` --- устанавливает значение счетчика товаров в корзине.
+        -   `setCatalog(products: Product[]): void` --- устанавливает каталог продуктов.
+        -   `setLocked(locked: boolean): void` --- блокирует прокрутку страницы в модальном окне.
+    -   **Наследуется от**: `Component`
+6.  **Modal**
 
     -   **Описание**: Класс отображает модальное окно.
     -   **Поля**:
@@ -178,46 +179,58 @@ yarn build
         -   `setContent(content: HTMLElement): void` --- устанавливает содержимое модального окна.
         -   `open(): void` --- открывает модальное окно.
         -   `close(): void` --- закрывает модальное окно.
-        -   `render(): HTMLElement` --- рендерит модальное окно.
-9.  **Success**
+        -   `render(data: IModalData): HTMLElement` --- рендерит модальное окно и открывает его.
+    -   **Наследуется от**: `Component`
+7.  **Success**
 
     -   **Описание**: Класс отображает успешное оформление заказа.
     -   **Поля**:
         -   `element` (HTMLElement) --- корневой элемент успешного оформления заказа.
     -   **Методы**:
         -   `setTotal(total: number): void` --- устанавливает значение общей суммы заказа.
-10. **Form**
+    -   **Наследуется от**: `Component`
+8.  **DeliveryForm**
 
-    -   **Описание**: Класс обрабатывает результаты ввода форм и передает информацию о результатах валидации.
+    -   **Описание**: Класс отображает форму с вводом адреса доставки.
     -   **Поля**:
         -   `element` (HTMLElement) --- корневой элемент формы.
+        -   `_submit` (HTMLButtonElement) --- кнопка отправки формы.
+        -   `_errors` (HTMLElement) --- элемент для отображения ошибок.
     -   **Методы**:
-        -   (будут реализованы в дочерних классах)
+        -   `render(data: DeliveryData & IFormState): void` --- рендерит форму, используя `Object.assign`.
+        -   `onSubmit(callback: (data: DeliveryData) => void): void` --- устанавливает обработчик события отправки формы.
+    -   **Наследуется от**: `Form`
+9.  **ContactsForm**
 
-### Presenter (Презентер)
-
-#### Классы:
-
-1.  **EventEmitter**
-
-    -   **Описание**: Класс управляет событиями в приложении.
+    -   **Описание**: Класс отображает форму с контактными данными.
     -   **Поля**:
-        -   `events` (Map<string, Function[]>) --- карта событий и их слушателей.
+        -   `element` (HTMLElement) --- корневой элемент формы.
+        -   `_submit` (HTMLButtonElement) --- кнопка отправки формы.
+        -   `_errors` (HTMLElement) --- элемент для отображения ошибок.
     -   **Методы**:
-        -   `on(event: string, listener: Function): void` --- устанавливает обработчик на событие.
-        -   `off(event: string, listener: Function): void` --- сбрасывает обработчик с события.
-        -   `emit(event: string, ...args: any[]): void` --- уведомляет подписчиков о наступлении события.
-
+        -   `render(data: ContactsData & IFormState): void` --- рендерит форму, используя `Object.assign`.
+        -   `onSubmit(callback: (data: ContactsData) => void): void` --- устанавливает обработчик события отправки формы.
+    -   **Наследуется от**: `Form`
 
 ### Пример интерфейсов
+
 ````
-interface IProductCardView {
+interface IProductCard {
   product: Product;
+  setId(id: number): void;
+  setTitle(title: string): void;
+  setImage(src: string): void;
+  setDescription(description: string): void;
+  setCategory(category: string): void;
+  setButton(text: string): void;
+  setPrice(price: number): void;
   render(): void;
 }
 
-interface ICartView {
-  cart: CartModel;
+interface ICart {
+  setItems(items: CartItem[]): void;
+  setTotal(total: number): void;
+  setSelected(selected: boolean): void;
   render(): void;
 }
 
@@ -236,28 +249,11 @@ interface IPage {
   setLocked(locked: boolean): void;
 }
 
-interface ICard {
-  product: Product;
-  setId(id: number): void;
-  setTitle(title: string): void;
-  setImage(src: string): void;
-  setDescription(description: string): void;
-  setCategory(category: string): void;
-  setButton(text: string): void;
-  setPrice(price: number): void;
-}
-
-interface IBasket {
-  setItems(items: CartItem[]): void;
-  setTotal(total: number): void;
-  setSelected(selected: boolean): void;
-}
-
 interface IModal {
   setContent(content: HTMLElement): void;
   open(): void;
   close(): void;
-  render(): HTMLElement;
+  render(data: IModalData): HTMLElement;
 }
 
 interface ISuccess {
@@ -266,5 +262,63 @@ interface ISuccess {
 
 interface IForm {
   element: HTMLElement;
+  render(data: any): void;
+  onSubmit(callback: (data: any) => void): void;
 }
 ````
+
+### Common компоненты
+
+#### EventEmitter
+
+**Описание**: Класс управляет событиями в приложении.
+
+-   **Поля**:
+    -   `events` (Map<string, Function[]>) --- карта событий и их слушателей.
+-   **Методы**:
+    -   `on(event: string, listener: Function): void` --- устанавливает обработчик на событие.
+    -   `off(event: string, listener: Function): void` --- сбрасывает обработчик с события.
+    -   `emit(event: string, ...args: any[]): void` --- уведомляет подписчиков о наступлении события.
+
+#### CloneTemplate
+
+**Описание**: Функция клонирует HTML-шаблон.
+
+-   **Параметры**:
+    -   `templateId` (string) --- идентификатор шаблона.
+-   **Возвращает**: HTMLElement --- клонированный элемент.
+
+#### CreateElement
+
+**Описание**: Функция создает HTML-элемент с указанными параметрами.
+
+-   **Параметры**:
+    -   `tagName` (string) --- имя тега.
+    -   `attributes` (object) --- атрибуты элемента.
+-   **Возвращает**: HTMLElement --- созданный элемент.
+
+#### EnsureElement
+
+**Описание**: Функция гарантирует существование элемента в документе.
+
+-   **Параметры**:
+    -   `selector` (string) --- селектор элемента.
+    -   `container` (HTMLElement) --- контейнер для поиска элемента.
+-   **Возвращает**: HTMLElement --- найденный элемент.
+
+#### FormatNumber
+
+**Описание**: Функция форматирует число в строку с разделителями.
+
+-   **Параметры**:
+    -   `number` (number) --- число для форматирования.
+-   **Возвращает**: string --- отформатированное число.
+
+### Пример использования компонентов
+
+Пример использования `EventEmitter`, `CloneTemplate`, `CreateElement`, `EnsureElement`, `FormatNumber` можно найти в следующих файлах:
+
+-   **basket.ts**
+-   **form.ts**
+-   **modal.ts**
+-   **success.ts**
