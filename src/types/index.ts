@@ -56,3 +56,9 @@ export type ApiListResponse<Type> = {
 };
 
 export type FormName = 'order' | 'contacts';
+
+// Добавляем интерфейс IFormValid
+export interface IFormValid {
+	valid: boolean;
+	errors: string[];
+}

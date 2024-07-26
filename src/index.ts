@@ -53,12 +53,21 @@ const onFormErrorsChange = (input: {
 
 const renderForm = (formName: FormName) => {
 	const form = formName === 'order' ? order : contacts;
+	const state =
+		formName === 'order'
+			? {
+					...appData.order,
+					valid: Object.keys(appData.orderFormErrors).length === 0,
+					errors: Object.values(appData.orderFormErrors),
+			  }
+			: {
+					...appData.order,
+					valid: Object.keys(appData.contactsFormErrors).length === 0,
+					errors: Object.values(appData.contactsFormErrors),
+			  };
 	form.cleanFieldValues();
 	modal.render({
-		content: form.render({
-			valid: false,
-			errors: [],
-		}),
+		content: form.render(state),
 	});
 };
 
@@ -88,14 +97,14 @@ events.on('card:select', (item: IProduct) => {
 		},
 	});
 	card.inBasket = appData.isInBasket(item);
-	card.category = item.category;
+	card.category = item.category; // Установим категорию для правильного отображения цвета
 	modal.render({
 		content: card.render({
 			title: item.title,
 			image: item.image,
 			description: item.description,
 			price: item.price,
-			category: item.category,
+			category: item.category, // Добавим категорию при рендеринге
 		}),
 	});
 });
@@ -122,6 +131,7 @@ events.on('modal:open', () => {
 });
 
 events.on('modal:close', () => {
+	appData.saveOrderState(); // Save state when closing the form
 	page.locked = false;
 });
 
@@ -130,8 +140,13 @@ events.on('basket:open', () => {
 });
 
 events.on('order:open', () => {
-	appData.cleanOrder();
+	appData.restoreOrderState(); // Restore state when reopening the form
 	renderForm('order');
+});
+
+events.on('contacts:open', () => {
+	appData.restoreOrderState(); // Restore state when reopening the form
+	renderForm('contacts');
 });
 
 events.on(

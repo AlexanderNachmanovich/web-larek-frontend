@@ -24,6 +24,10 @@ export class AppState extends Model<IAppState> {
 	orderFormErrors: OrderFormErrors = {};
 	contactsFormErrors: ContactsFormErrors = {};
 
+	private savedOrderState: Partial<IOrder> = {};
+	private savedOrderFormErrors: OrderFormErrors = {};
+	private savedContactsFormErrors: ContactsFormErrors = {};
+
 	constructor(data: Partial<IAppState>, protected events: IEvents) {
 		super(data, events);
 		this.catalog = [];
@@ -150,5 +154,20 @@ export class AppState extends Model<IAppState> {
 
 	getPhone() {
 		return this.order.phone;
+	}
+
+	// New methods for saving and restoring form state
+	saveOrderState() {
+		this.savedOrderState = { ...this.order };
+		this.savedOrderFormErrors = { ...this.orderFormErrors };
+		this.savedContactsFormErrors = { ...this.contactsFormErrors };
+	}
+
+	restoreOrderState() {
+		this.order = { ...this.savedOrderState } as IOrder;
+		this.orderFormErrors = { ...this.savedOrderFormErrors };
+		this.contactsFormErrors = { ...this.savedContactsFormErrors };
+		this.emitChanges('order:restore');
+		this.emitChanges('contacts:restore');
 	}
 }

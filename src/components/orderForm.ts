@@ -1,4 +1,4 @@
-import { IOrderForm } from '../types';
+import { IOrderForm, IFormValid } from '../types';
 import { ACTIVE_BUTTON_CLASS } from '../utils/constants';
 import { IEvents } from './base/events';
 import { Form } from './common/form';
@@ -46,5 +46,15 @@ export class Order extends Form<IOrderForm> {
 		this.buttons.forEach((button) =>
 			button.classList.remove(ACTIVE_BUTTON_CLASS)
 		);
+	}
+
+	// Override render to include state restoration
+	render(state: Partial<IOrderForm> & IFormValid) {
+		super.render(state);
+		this.address = state.address || '';
+		this.payment = state.payment || '';
+		this.valid = state.valid;
+		this.errors = state.errors.join('; ');
+		return this.container;
 	}
 }

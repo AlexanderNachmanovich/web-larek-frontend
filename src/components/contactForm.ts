@@ -1,4 +1,4 @@
-import { IContactsForm } from '../types';
+import { IContactsForm, IFormValid } from '../types';
 import { IEvents } from './base/events';
 import { Form } from './common/form';
 
@@ -20,5 +20,15 @@ export class Contacts extends Form<IContactsForm> {
 	cleanFieldValues() {
 		this.email = '';
 		this.phone = '';
+	}
+
+	// Override render to include state restoration
+	render(state: Partial<IContactsForm> & IFormValid) {
+		super.render(state);
+		this.email = state.email || '';
+		this.phone = state.phone || '';
+		this.valid = state.valid;
+		this.errors = state.errors.join('; ');
+		return this.container;
 	}
 }
