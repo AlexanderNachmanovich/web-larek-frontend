@@ -34,6 +34,7 @@ export class Card extends Component<ICard> {
 			}
 		}
 	}
+
 	private getCategoryClass(value: string) {
 		const categorySetting = settings[value] || 'unknown';
 		return 'card__category_' + categorySetting;
@@ -57,7 +58,7 @@ export class Card extends Component<ICard> {
 	set category(value: string) {
 		this._category.textContent = value;
 		const backgroundColorClass = this.getCategoryClass(value);
-		this._category.classList.add(backgroundColorClass);
+		this._category.className = 'card__category ' + backgroundColorClass;
 	}
 
 	set description(value: string) {

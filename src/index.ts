@@ -88,12 +88,14 @@ events.on('card:select', (item: IProduct) => {
 		},
 	});
 	card.inBasket = appData.isInBasket(item);
+	card.category = item.category; // Установим категорию для правильного отображения цвета
 	modal.render({
 		content: card.render({
 			title: item.title,
 			image: item.image,
 			description: item.description,
 			price: item.price,
+			category: item.category, // Добавим категорию при рендеринге
 		}),
 	});
 });
