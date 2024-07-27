@@ -99,12 +99,22 @@ export class AppState extends Model<IAppState> {
 
 	setContactsErrors() {
 		const errors: ContactsFormErrors = {};
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		const phoneRegex =
+			/^\+?[1-9]\d{0,2}?[-\s.]?\(?\d{1,4}?\)?[-\s.]?\d{1,4}[-\s.]?\d{1,4}[-\s.]?\d{1,9}$/;
+
 		if (!this.order.phone) {
 			errors.phone = 'Укажите телефон';
+		} else if (!phoneRegex.test(this.order.phone)) {
+			errors.phone = 'Некорректный телефон';
 		}
+
 		if (!this.order.email) {
 			errors.email = 'Укажите емейл';
+		} else if (!emailRegex.test(this.order.email)) {
+			errors.email = 'Некорректный емейл';
 		}
+
 		this.contactsFormErrors = errors;
 		return errors;
 	}

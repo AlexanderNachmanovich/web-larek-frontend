@@ -316,7 +316,7 @@ interface IForm {
 
 ### Пример использования компонентов
 
-Пример использования `EventEmitter`, `CloneTemplate`, `CreateElement`, `EnsureElement`, `FormatNumber` можно найти в следующих файлах:
+Пример использования `EventEmitter`, `cloneTemplate`, `createElement`, `ensureElement`, `priceString` можно найти в следующих файлах:
 
 -   **basket.ts**
 -   **form.ts**
